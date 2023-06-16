@@ -1,0 +1,11 @@
+.customContainer{ 
+    justify-content: space-between !important;
+}
+
+.totalIncomeCard{
+   background-color: var(--total-income-card) !important;
+   color: var(--total-income-text);
+   MoneyText{
+     color: var(--total-income-text) !important;
+   }
+}
