@@ -18,9 +18,6 @@ export function DeleteIcon() {
           transform="translate(0 -3.009)"
           fill="none"
           stroke="#e23161"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="1"
         />
         <path
           id="Path_8"
@@ -29,9 +26,6 @@ export function DeleteIcon() {
           transform="translate(-1.504)"
           fill="none"
           stroke="#e23161"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="1"
         />
       </g>
     </svg>

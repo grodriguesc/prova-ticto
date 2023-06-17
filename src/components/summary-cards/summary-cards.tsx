@@ -2,15 +2,14 @@ import { styled } from "styled-components";
 import styles from "./summary-cards.module.scss";
 import IncomeArrow from "../svg-components/income-arrow";
 import OutcomeArrow from "../svg-components/outcome-arrow";
-import { Poppins } from "next/font/google";
-
-const poppins = Poppins({ weight: ["400", "500", "700"], subsets: ["latin"] });
-interface SummaryCardsProps {}
+import {
+  useTransaction,
+  TransactionType,
+} from "@/app/context/transaction-context";
 
 const Card = styled.div`
   border-radius: 8px;
-  background-color: #ffffff;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: ${(props) => props.color || "#ffffff"};
   padding: 16px;
   width: 24rem;
   height: 11rem;
@@ -27,34 +26,90 @@ const CardHeader = styled.div`
 
 const MoneyText = styled.div`
   font-size: 42px;
-  color: ${({ isTotalIncome }) =>
-    isTotalIncome ? "var(--total-income-text)" : "var(--income-text)"};
+  color: ${(props) => props.color || "var(--income-text)"};
   font-weight: 500;
   position: absolute;
   bottom: 27px;
 `;
 
-export default function SummaryCards(props: SummaryCardsProps) {
+const StyledCard = ({ isNegativeBalance = false, ...props }) => {
+  const bgColor = isNegativeBalance
+    ? "var(--negative-income)"
+    : "var(--positive-income)";
+
+  return <Card color={bgColor} {...props} />;
+};
+
+const StyledMoneyText = ({ isTotalIncome = false, ...props }) => {
+  const color = isTotalIncome
+    ? "var(--total-income-text)"
+    : "var(--income-text)";
+
+  return <MoneyText color={color} {...props} />;
+};
+export default function SummaryCards() {
+  const { transactions } = useTransaction();
+
+  const totalIncome = transactions
+    .filter((transaction) => transaction.type === TransactionType.Income)
+    .reduce((total, transaction) => {
+      console.log(transaction);
+
+      return total + transaction.rawPrice;
+    }, 0);
+
+  const totalOutcome = transactions
+    .filter((transaction) => transaction.type === TransactionType.Outcome)
+    .reduce((total, transaction) => total + transaction.rawPrice, 0);
+
+  const totalBalance = totalIncome - totalOutcome;
+  console.log(totalBalance);
+
+  const isNegativeBalance = totalBalance < 0;
+
   return (
     <div className={`${styles.customContainer} container`}>
       <Card>
         <CardHeader>
           Entradas <IncomeArrow />
         </CardHeader>
-        <MoneyText className={poppins.className}>R$ 1.529.289,52</MoneyText>
+        <MoneyText> {formatPrice(totalIncome.toFixed(2))}</MoneyText>
       </Card>
       <Card>
         <CardHeader>
-          Saidas <OutcomeArrow />
+          Saídas <OutcomeArrow />
         </CardHeader>
-        <MoneyText className={poppins.className}>R$ 1.529.289,52</MoneyText>
+        <MoneyText> {formatPrice(totalOutcome.toFixed(2))}</MoneyText>
       </Card>
-      <Card className={`${styles.totalIncomeCard}`}>
+      <StyledCard
+        isNegativeBalance={isNegativeBalance}
+        className={`${styles.totalIncomeCard} ${
+          isNegativeBalance ? styles.negativeBalance : ""
+        }`}
+      >
         <CardHeader>Saldo Total</CardHeader>
-        <MoneyText isTotalIncome className={poppins.className}>
-          R$ 15.000.000,00
-        </MoneyText>
-      </Card>
+        <StyledMoneyText isTotalIncome>
+          {formatPrice(totalBalance.toFixed(2))}
+        </StyledMoneyText>
+      </StyledCard>
     </div>
   );
+}
+
+function formatPrice(value: string) {
+  const rawValue = value.replace(/[^0-9]/g, "");
+  let formattedValue = "";
+
+  if (rawValue.length <= 2) {
+    formattedValue = "0";
+  } else {
+    formattedValue = rawValue.slice(0, -2);
+  }
+
+  const wholePart = formattedValue.replace(/^0+/, "");
+  const decimalPart = rawValue.slice(-2);
+  formattedValue =
+    "R$ " + (wholePart !== "" ? wholePart : "0") + "," + decimalPart;
+
+  return formattedValue;
 }

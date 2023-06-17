@@ -1,5 +1,9 @@
 import styled from "styled-components";
 import { DeleteIcon } from "../svg-components/delete-icon";
+import {
+  useTransaction,
+  TransactionType,
+} from "@/app/context/transaction-context";
 
 interface TransactionTableProps {}
 
@@ -13,8 +17,6 @@ const Table = styled.table`
 
 const TableRow = styled.tr`
   background-color: #fff;
-
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 `;
 
 const HeaderRow = styled.tr`
@@ -58,16 +60,23 @@ const DeleteCell = styled.td`
 
 const MoneyCell = styled(TableCell)`
   color: ${(props) =>
-    props.value < 0 ? "var(--negative-income)" : "var(--positive-income)"};
+    props.value === TransactionType.Outcome
+      ? "var(--negative-income)"
+      : "var(--positive-income)"};
 `;
 
 export default function TransactionTable(props: TransactionTableProps) {
-  let data = Array.from({ length: 20 }, () => ({
-    description: `Item ${Math.floor(Math.random() * 1000)}`,
-    value: getRandomInt(-1000, 1000),
-    category: getRandomCategory(),
-    date: new Date(getRandomInt(new Date(2022, 0, 1).getTime(), Date.now())),
-  }));
+  const { transactions } = useTransaction();
+
+  let data = [
+    {
+      description: "item",
+      value: 1000,
+      category: "teste",
+      date: new Date(),
+      type: TransactionType.Income,
+    },
+  ];
 
   data = data.map((item) => ({
     ...item,
@@ -86,14 +95,14 @@ export default function TransactionTable(props: TransactionTableProps) {
         </HeaderRow>
       </thead>
       <tbody>
-        {data.map((item, index) => (
+        {transactions.map((transaction, index) => (
           <TableRow key={index}>
-            <TableCell>{item.description}</TableCell>
-            <MoneyCell value={item.value}>
-              <b>{formatMoney(item.value)}</b>
+            <TableCell>{transaction.name}</TableCell>
+            <MoneyCell value={transaction.type}>
+              <b>{transaction.price}</b>
             </MoneyCell>
-            <TableCell>{item.category}</TableCell>
-            <TableCell>{item.formattedDate}</TableCell>
+            <TableCell>{transaction.category}</TableCell>
+            <TableCell>{formatDate(transaction.date)}</TableCell>
             <DeleteCell>
               <DeleteIcon />
             </DeleteCell>
@@ -102,30 +111,6 @@ export default function TransactionTable(props: TransactionTableProps) {
       </tbody>
     </Table>
   );
-}
-
-function formatMoney(value: number) {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value);
-}
-function getRandomInt(min: number, max: number) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function getRandomCategory() {
-  const categories = [
-    "Alimentação",
-    "Transporte",
-    "Lazer",
-    "Saúde",
-    "Educação",
-    "Outros",
-  ];
-  return categories[getRandomInt(0, categories.length - 1)];
 }
 
 function formatDate(date: Date) {
