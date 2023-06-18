@@ -31,6 +31,12 @@ const ModalContent = styled.div`
   position: relative;
   width: 43rem;
   height: 39rem;
+
+  @media (max-width: 768px) {
+    width: 90%;
+    height: auto;
+    padding: 20px;
+  }
 `;
 
 const CloseButton = styled.button`
@@ -42,8 +48,12 @@ const CloseButton = styled.button`
   font-size: 24px;
   cursor: pointer;
   color: var(--income-text);
-`;
 
+  @media (max-width: 768px) {
+    right: 10px;
+    top: 10px;
+  }
+`;
 const Label = styled.label`
   display: flex;
   flex-direction: column;

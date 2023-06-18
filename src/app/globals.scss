@@ -33,9 +33,17 @@ a {
   text-decoration: none;
 }
 
-.container{
+.container {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 51px 362px;
+  padding: 3rem 22.5rem;
+
+  @media (max-width: 1440px) {
+      padding: 3rem 5rem;
+    }
+
+  @media (max-width: 768px) {
+    padding: 51px 20px;
+  }
 }

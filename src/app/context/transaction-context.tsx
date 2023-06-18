@@ -17,11 +17,13 @@ export interface TransactionData {
 interface TransactionContextData {
   transactions: TransactionData[];
   addTransaction: (transaction: TransactionData) => void;
+  deleteTransaction: (index: number) => void;
 }
 
 const TransactionContext = createContext<TransactionContextData>({
   transactions: [],
   addTransaction: () => {},
+  deleteTransaction: () => {},
 });
 
 export function useTransaction(): TransactionContextData {
@@ -44,8 +46,16 @@ export function TransactionProvider({
     ]);
   };
 
+  const deleteTransaction = (index: number) => {
+    setTransactions((currentTransactions) =>
+      currentTransactions.filter((_, idx) => idx !== index)
+    );
+  };
+
   return (
-    <TransactionContext.Provider value={{ transactions, addTransaction }}>
+    <TransactionContext.Provider
+      value={{ transactions, addTransaction, deleteTransaction }}
+    >
       {children}
     </TransactionContext.Provider>
   );

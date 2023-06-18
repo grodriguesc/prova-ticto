@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { Logo } from "../svg-components/logo";
 import ModalRegisterTransaction from "@/components/modal-transaction/modal-transaction";
 
@@ -8,8 +8,15 @@ const HeaderStyled = styled.header`
   justify-content: space-between;
   align-items: center;
   background: var(--primary-color);
-  height: 177px;
+  height: 11rem;
   margin-bottom: -5rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    height: auto;
+    padding: 20px;
+    margin-bottom: -4rem;
+  }
 `;
 
 const TransactionButton = styled.button`
@@ -18,9 +25,14 @@ const TransactionButton = styled.button`
   border: none;
   border-radius: 8px;
   width: 245px;
-  height: 53px;
+  height: 3.5rem;
   font-weight: bold;
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-top: 20px;
+  }
 `;
 
 export function Header() {

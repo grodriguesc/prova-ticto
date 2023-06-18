@@ -11,12 +11,26 @@ const Table = styled.table`
   width: 100%;
   border-collapse: separate;
   border-spacing: 0 20px;
-  padding: 51px 362px;
+  padding: 0 20px;
   font-size: 18px;
+
+  @media (min-width: 768px) {
+    padding: 51px 362px;
+  }
 `;
 
 const TableRow = styled.tr`
   background-color: #fff;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    text-align: center;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    align-items: center;
+  }
 `;
 
 const HeaderRow = styled.tr`
@@ -27,6 +41,10 @@ const TableHeader = styled.th`
   text-align: left;
   padding: 15px 10rem 10px 10px;
   font-weight: 400;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const TableCell = styled.td`
@@ -41,6 +59,20 @@ const TableCell = styled.td`
   &:last-child {
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 40px;
+    border-radius: 0;
+    text-align: center;
+
+    &:before {
+      content: attr(data-label);
+      float: left;
+      font-weight: bold;
+      color: var(--gray-text);
+    }
   }
 `;
 
@@ -58,15 +90,36 @@ const DeleteCell = styled.td`
   }
 `;
 
+const DeleteButton = styled.button`
+  cursor: pointer;
+  border: none;
+  background: transparent;
+
+  @media (max-width: 768px) {
+    border-radius: 100%;
+    background: var(--primary-color);
+    width: 30px;
+    height: 30px;
+  }
+`;
+
 const MoneyCell = styled(TableCell)`
   color: ${(props) =>
     props.value === TransactionType.Outcome
       ? "var(--negative-income)"
       : "var(--positive-income)"};
+
+  @media (max-width: 768px) {
+    &:before {
+      content: "Valor: ";
+      color: var(--gray-text);
+      font-weight: bold;
+    }
+  }
 `;
 
 export default function TransactionTable(props: TransactionTableProps) {
-  const { transactions } = useTransaction();
+  const { transactions, deleteTransaction } = useTransaction();
 
   let data = [
     {
@@ -97,14 +150,18 @@ export default function TransactionTable(props: TransactionTableProps) {
       <tbody>
         {transactions.map((transaction, index) => (
           <TableRow key={index}>
-            <TableCell>{transaction.name}</TableCell>
-            <MoneyCell value={transaction.type}>
+            <TableCell data-label="Descrição">{transaction.name}</TableCell>
+            <MoneyCell value={transaction.type} data-label="Valor">
               <b>{transaction.price}</b>
             </MoneyCell>
-            <TableCell>{transaction.category}</TableCell>
-            <TableCell>{formatDate(transaction.date)}</TableCell>
-            <DeleteCell>
-              <DeleteIcon />
+            <TableCell data-label="Categoria">{transaction.category}</TableCell>
+            <TableCell data-label="Data">
+              {formatDate(transaction.date)}
+            </TableCell>
+            <DeleteCell data-label="Ação">
+              <DeleteButton onClick={() => deleteTransaction(index)}>
+                <DeleteIcon />
+              </DeleteButton>
             </DeleteCell>
           </TableRow>
         ))}

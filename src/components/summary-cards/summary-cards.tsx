@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import styled from "styled-components";
 import styles from "./summary-cards.module.scss";
 import IncomeArrow from "../svg-components/income-arrow";
 import OutcomeArrow from "../svg-components/outcome-arrow";
@@ -16,6 +16,11 @@ const Card = styled.div`
   font-size: 24px;
   flex-direction: column;
   position: relative;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-bottom: 20px;
+  }
 `;
 
 const CardHeader = styled.div`
@@ -47,23 +52,19 @@ const StyledMoneyText = ({ isTotalIncome = false, ...props }) => {
 
   return <MoneyText color={color} {...props} />;
 };
+
 export default function SummaryCards() {
   const { transactions } = useTransaction();
 
   const totalIncome = transactions
     .filter((transaction) => transaction.type === TransactionType.Income)
-    .reduce((total, transaction) => {
-      console.log(transaction);
-
-      return total + transaction.rawPrice;
-    }, 0);
+    .reduce((total, transaction) => total + transaction.rawPrice, 0);
 
   const totalOutcome = transactions
     .filter((transaction) => transaction.type === TransactionType.Outcome)
     .reduce((total, transaction) => total + transaction.rawPrice, 0);
 
   const totalBalance = totalIncome - totalOutcome;
-  console.log(totalBalance);
 
   const isNegativeBalance = totalBalance < 0;
 

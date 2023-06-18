@@ -1,4 +1,20 @@
+import { useEffect, useState } from "react";
+
 export function DeleteIcon() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +33,7 @@ export function DeleteIcon() {
           d="M4.5,9H17.96"
           transform="translate(0 -3.009)"
           fill="none"
-          stroke="#e23161"
+          stroke={isMobile ? "#fff" : "#e23161"}
         />
         <path
           id="Path_8"
@@ -25,7 +41,7 @@ export function DeleteIcon() {
           d="M17.969,5.991V16.46a1.5,1.5,0,0,1-1.5,1.5H9a1.5,1.5,0,0,1-1.5-1.5V5.991m2.243,0V4.5a1.5,1.5,0,0,1,1.5-1.5H14.23a1.5,1.5,0,0,1,1.5,1.5v1.5"
           transform="translate(-1.504)"
           fill="none"
-          stroke="#e23161"
+          stroke={isMobile ? "#fff" : "#e23161"}
         />
       </g>
     </svg>
