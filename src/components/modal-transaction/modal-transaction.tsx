@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { useSpring, animated } from "react-spring";
+import { animated } from "@react-spring/web";
 import IncomeModalArrow from "../svg-components/income-modal-arrow";
 import OutcomeModalArrow from "../svg-components/outcome-modal-arrow";
 import React, { useState, useRef, useEffect } from "react";
@@ -198,12 +198,29 @@ export default function ModalRegisterTransaction({
     Partial<Record<keyof TransactionData, string>>
   >({});
 
-  const inputRefs = {
+  type InputRefs = {
+    name: React.RefObject<HTMLInputElement>;
+    price: React.RefObject<HTMLInputElement>;
+    category: React.RefObject<HTMLInputElement>;
+    typeIncome: React.RefObject<HTMLButtonElement>;
+    typeOutcome: React.RefObject<HTMLButtonElement>;
+  };
+
+  const inputRefs: InputRefs = {
     name: useRef<HTMLInputElement>(null),
     price: useRef<HTMLInputElement>(null),
     category: useRef<HTMLInputElement>(null),
     typeIncome: useRef<HTMLButtonElement>(null),
     typeOutcome: useRef<HTMLButtonElement>(null),
+  };
+
+  const INPUT_REF_MAP: Record<keyof TransactionData, keyof typeof inputRefs> = {
+    name: "name",
+    price: "price",
+    category: "category",
+    type: "typeIncome",
+    date: "name",
+    rawPrice: "price",
   };
 
   useEffect(() => {
@@ -215,7 +232,9 @@ export default function ModalRegisterTransaction({
     shakeFields();
   }, []);
 
-  const getFirstInvalidField = (): React.RefObject<HTMLInputElement> | null => {
+  const getFirstInvalidField = (): React.RefObject<
+    HTMLInputElement | HTMLButtonElement
+  > | null => {
     const fields: (keyof TransactionData)[] = [
       "name",
       "price",
@@ -226,7 +245,8 @@ export default function ModalRegisterTransaction({
     for (let i = 0; i < fields.length; i++) {
       const fieldName = fields[i];
       if (formErrors[fieldName]) {
-        return inputRefs[fieldName];
+        const inputRefName = INPUT_REF_MAP[fieldName];
+        return inputRefs[inputRefName as keyof typeof inputRefs];
       }
     }
 

@@ -5,7 +5,9 @@ import {
   TransactionType,
 } from "@/app/context/transaction-context";
 
-interface TransactionTableProps {}
+type MoneyCellProps = {
+  value: TransactionType;
+};
 
 const Table = styled.table`
   width: 100%;
@@ -103,7 +105,7 @@ const DeleteButton = styled.button`
   }
 `;
 
-const MoneyCell = styled(TableCell)`
+const MoneyCell = styled(TableCell)<MoneyCellProps>`
   color: ${(props) =>
     props.value === TransactionType.Outcome
       ? "var(--negative-income)"
@@ -118,23 +120,8 @@ const MoneyCell = styled(TableCell)`
   }
 `;
 
-export default function TransactionTable(props: TransactionTableProps) {
+export default function TransactionTable() {
   const { transactions, deleteTransaction } = useTransaction();
-
-  let data = [
-    {
-      description: "item",
-      value: 1000,
-      category: "teste",
-      date: new Date(),
-      type: TransactionType.Income,
-    },
-  ];
-
-  data = data.map((item) => ({
-    ...item,
-    formattedDate: formatDate(item.date),
-  }));
 
   return (
     <Table>
