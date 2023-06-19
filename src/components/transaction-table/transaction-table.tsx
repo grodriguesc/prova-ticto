@@ -67,41 +67,39 @@ const TableCell = styled.td`
     width: 100%;
     height: 40px;
     border-radius: 0;
-    text-align: center;
-
+    text-align: right;
+    padding: 10px 10%;
     &:before {
-      content: attr(data-label);
+      content: attr(data-label) ": ";
       float: left;
       font-weight: bold;
       color: var(--gray-text);
     }
   }
 `;
-
 const DeleteCell = styled.td`
-  max-width: 30px;
   padding: 15px 20px;
-  text-align: right;
+  text-align: center;
+
   &:first-child {
     border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
+    border-bottom-left-radius: 8px !important;
   }
+
   &:last-child {
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
   }
-`;
-
-const DeleteButton = styled.button`
-  cursor: pointer;
-  border: none;
-  background: transparent;
 
   @media (max-width: 768px) {
-    border-radius: 100%;
-    background: var(--primary-color);
-    width: 30px;
-    height: 30px;
+    background: var(--negative-income);
+    width: 100%;
+    margin-left: 0px !important;
+
+    &:last-child {
+      border-top-right-radius: 0px;
+      border-bottom-left-radius: 8px;
+    }
   }
 `;
 
@@ -145,10 +143,11 @@ export default function TransactionTable() {
             <TableCell data-label="Data">
               {formatDate(transaction.date)}
             </TableCell>
-            <DeleteCell data-label="Ação">
-              <DeleteButton onClick={() => deleteTransaction(index)}>
-                <DeleteIcon />
-              </DeleteButton>
+            <DeleteCell
+              data-label="Ação"
+              onClick={() => deleteTransaction(index)}
+            >
+              <DeleteIcon />
             </DeleteCell>
           </TableRow>
         ))}

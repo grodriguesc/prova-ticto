@@ -52,6 +52,7 @@ const CloseButton = styled.button`
   @media (max-width: 768px) {
     right: 10px;
     top: 10px;
+    font-size: 18px;
   }
 `;
 const Label = styled.label`
@@ -131,6 +132,8 @@ export default function ModalRegisterTransaction({
   closeModal,
 }: ModalRegisterTransactionProps) {
   const { addTransaction } = useTransaction();
+
+  const modalContentRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -232,6 +235,31 @@ export default function ModalRegisterTransaction({
     shakeFields();
   }, []);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        modalContentRef.current &&
+        !modalContentRef.current.contains(event.target as Node)
+      ) {
+        closeModal();
+      }
+    }
+
+    function handleEscKey(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscKey);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscKey);
+    };
+  }, []);
+
   const getFirstInvalidField = (): React.RefObject<
     HTMLInputElement | HTMLButtonElement
   > | null => {
@@ -329,7 +357,7 @@ export default function ModalRegisterTransaction({
 
   return (
     <ModalWrapper>
-      <ModalContent>
+      <ModalContent ref={modalContentRef}>
         <CloseButton onClick={closeModal}>X</CloseButton>
         <ModalHeader>Cadastrar Transação</ModalHeader>
         <form onSubmit={handleSubmit}>
